@@ -342,6 +342,65 @@
     muatData();
   </script>
 </body>
+</html>/ Membuat elemen HTML dengan kelas dan teks (singkat dan rapi)
+    function el(tag, kelas, teks) {
+      const e = document.createElement(tag);
+      if (kelas) e.className = kelas;
+      if (teks) e.textContent = teks;
+      return e;
+    }
+
+    function tambahBaris(dl, label, nilai) {
+      if (!nilai) return; // lewati kalau datanya kosong
+      const baris = el("div");
+      baris.appendChild(el("dt", "", label));
+      baris.appendChild(el("dd", "", nilai));
+      dl.appendChild(baris);
+    }
+
+    // "Budi Santoso" -> "BS"
+    function inisial(nama) {
+      return nama.split(" ").filter(Boolean).slice(0, 2)
+        .map((k) => k[0].toUpperCase()).join("");
+    }
+
+    // Setiap kelas mendapat warna sendiri secara otomatis dari namanya
+    function warnaKelas(kelas) {
+      let total = 0;
+      for (const huruf of kelas || "") total += huruf.charCodeAt(0);
+      return (total * 47) % 360;
+    }
+
+    // "2010-05-17" -> "17 Mei 2010"
+    function formatTanggal(teks) {
+      if (!teks) return "";
+      return new Date(teks + "T00:00:00").toLocaleDateString("id-ID", {
+        day: "numeric", month: "long", year: "numeric"
+      });
+    }
+
+    function tampilkanPesan(teks, galat) {
+      elDaftar.replaceChildren(el("p", "pesan" + (galat ? " galat" : ""), teks));
+    }
+
+    // Isi pilihan filter kelas dari data yang ada (tanpa duplikat)
+    function isiPilihanKelas() {
+      const daftarKelas = [...new Set(semuaSiswa.map((s) => s.kelas).filter(Boolean))].sort();
+      daftarKelas.forEach((k) => {
+        const opsi = el("option", "", k);
+        opsi.value = k;
+        elKelas.appendChild(opsi);
+      });
+    }
+
+    // ---------- JALANKAN ----------
+    // Setiap kali pengunjung mengetik atau mengganti kelas, kartu diperbarui
+    elCari.addEventListener("input", tampilkanSiswa);
+    elKelas.addEventListener("change", tampilkanSiswa);
+
+    muatData();
+  </script>
+</body>
 </html>   <p class="pesan">Memuat data siswa...</p>
     </div>
   </section>
