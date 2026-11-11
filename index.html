@@ -1,289 +1,648 @@
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Biodata Siswa</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Biodata Siswa dan Guru</title>
 
-  <!-- Font Google (boleh dihapus; kalau gagal dimuat, browser pakai font sistem) -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
 
-  <!-- ==========================================================
-       BAGIAN 1: CSS (TAMPILAN)
-       CSS mengatur warna, ukuran, dan tata letak halaman.
-       Warna ditaruh di "variabel" (--nama) supaya mudah diganti
-       dan mendukung mode gelap.
-       ========================================================== -->
-  <style>
-    :root {
-      --bg: #eef2f7;
-      --kartu: #ffffff;
-      --teks: #14213d;
-      --teks-redup: #5b667a;
-      --garis: #d6dde8;
-      --aksen: #1d4ed8;
-    }
-    @media (prefers-color-scheme: dark) {
-      :root {
-        --bg: #0e1522;
-        --kartu: #172033;
-        --teks: #e8edf6;
-        --teks-redup: #98a4ba;
-        --garis: #2a3650;
-        --aksen: #6c9bff;
-      }
-    }
+<style>
+:root {
+  --bg:#eef2f7;
+  --card:#fff;
+  --text:#14213d;
+  --muted:#7b8493;
+  --line:#d6dde8;
+  --blue:#2926b9;
+  --purple:#a020b8;
+}
 
-    * { box-sizing: border-box; }
+* {box-sizing:border-box}
 
-    body {
-      margin: 0;
-      background: var(--bg);
-      color: var(--teks);
-      font-family: "Plus Jakarta Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
-      line-height: 1.5;
-    }
+body {
+  margin:0;
+  background:var(--bg);
+  color:var(--text);
+  font-family:'Plus Jakarta Sans',sans-serif;
+}
 
-    .wadah { max-width: 1100px; margin: 0 auto; padding: 24px 16px 48px; }
+.wadah {
+  max-width:1100px;
+  margin:auto;
+  padding:24px 12px;
+}
 
-    header h1 { margin: 0 0 4px; font-size: 1.75rem; font-weight: 800; }
-    header p  { margin: 0; color: var(--teks-redup); }
+header h1 {
+  font-size:23px;
+  margin:0 0 5px;
+  font-weight:800;
+}
 
-    /* Kolom pencarian dan filter */
-    .kontrol { display: flex; gap: 10px; flex-wrap: wrap; margin: 20px 0 8px; }
-    .kontrol input, .kontrol select {
-      font: inherit;
-      color: var(--teks);
-      background: var(--kartu);
-      border: 1px solid var(--garis);
-      border-radius: 10px;
-      padding: 10px 12px;
-    }
-    .kontrol input  { flex: 1 1 220px; }
-    .kontrol select { flex: 0 1 160px; }
-    .kontrol input:focus-visible, .kontrol select:focus-visible {
-      outline: 2px solid var(--aksen);
-      outline-offset: 1px;
-    }
+header p {
+  color:var(--muted);
+  font-size:13px;
+  margin:0;
+}
 
-    .jumlah { color: var(--teks-redup); font-size: 0.9rem; margin: 0 0 16px; }
+.menu {
+  display:flex;
+  gap:10px;
+  margin:20px 0;
+}
 
-    /* Susunan kartu: otomatis menyesuaikan lebar layar (HP = 1 kolom) */
-    .daftar {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-      gap: 16px;
-    }
+.menu button {
+  border:1px solid var(--line);
+  background:white;
+  color:#444;
+  padding:11px 18px;
+  border-radius:9px;
+  font-weight:700;
+  cursor:pointer;
+}
 
-    /* Kartu dibuat mirip kartu pelajar: pita warna di atas, foto bulat menimpa pita */
-    .kartu {
-      background: var(--kartu);
-      border: 1px solid var(--garis);
-      border-radius: 14px;
-      overflow: hidden;
-    }
-    .pita { height: 56px; background: hsl(var(--hue) 65% 45%); }
-    .isi  { padding: 0 16px 16px; text-align: center; }
+.menu button.aktif {
+  background:var(--blue);
+  color:white;
+}
 
-    .foto {
-      width: 76px; height: 76px;
-      margin: -38px auto 8px;
-      border-radius: 50%;
-      border: 4px solid var(--kartu);
-      background: hsl(var(--hue) 55% 88%);
-      color: hsl(var(--hue) 65% 28%);
-      display: grid; place-items: center;
-      font-weight: 800; font-size: 1.5rem;
-      overflow: hidden;
-    }
-    .foto img { width: 100%; height: 100%; object-fit: cover; }
+.atas {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+  flex-wrap:wrap;
+}
 
-    .nama { margin: 0; font-size: 1.05rem; font-weight: 800; }
-    .nis  { margin: 0 0 12px; color: var(--teks-redup); font-size: 0.85rem; }
+.atas h2 {
+  font-size:17px;
+}
 
-    .rincian { margin: 0; text-align: left; font-size: 0.9rem; }
-    .rincian div {
-      display: flex; justify-content: space-between; gap: 12px;
-      padding: 6px 0; border-top: 1px solid var(--garis);
-    }
-    .rincian dt { color: var(--teks-redup); }
-    .rincian dd { margin: 0; font-weight: 600; text-align: right; }
+.btn-tambah {
+  background:var(--purple);
+  color:white;
+  border:0;
+  padding:11px 15px;
+  border-radius:9px;
+  font-weight:700;
+  cursor:pointer;
+}
 
-    /* Pesan status: memuat, kosong, galat */
-    .pesan {
-      grid-column: 1 / -1;
-      text-align: center;
-      padding: 40px 16px;
-      color: var(--teks-redup);
-    }
-    .pesan.galat { color: #b42318; }
-    @media (prefers-color-scheme: dark) { .pesan.galat { color: #ff8b80; } }
-  </style>
+.kontrol {
+  display:flex;
+  gap:10px;
+  margin:12px 0;
+}
+
+.kontrol input,
+.kontrol select {
+  min-width:0;
+  flex:1;
+  padding:11px;
+  border:1px solid var(--line);
+  border-radius:9px;
+  background:white;
+  font:inherit;
+}
+
+.jumlah {
+  color:var(--muted);
+  font-size:12px;
+  margin:12px 0;
+}
+
+.daftar {
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:12px;
+}
+
+.kartu {
+  background:white;
+  border:1px solid var(--line);
+  border-radius:12px;
+  overflow:hidden;
+}
+
+.pita {
+  height:39px;
+}
+
+.isi {
+  padding:0 12px 13px;
+  text-align:center;
+}
+
+.foto {
+  width:53px;
+  height:53px;
+  border-radius:50%;
+  margin:-27px auto 7px;
+  border:3px solid white;
+  display:grid;
+  place-items:center;
+  font-size:17px;
+  font-weight:800;
+  overflow:hidden;
+}
+
+.foto img {
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+
+.nama {
+  font-size:12px;
+  font-weight:800;
+  margin:5px 0;
+  overflow-wrap:anywhere;
+}
+
+.nomor {
+  font-size:10px;
+  color:var(--muted);
+  margin:0 0 11px;
+}
+
+.rincian {
+  text-align:left;
+  font-size:10px;
+}
+
+.baris {
+  display:flex;
+  justify-content:space-between;
+  gap:8px;
+  padding:7px 0;
+  border-top:1px solid var(--line);
+}
+
+.baris span {color:var(--muted)}
+
+.baris b {
+  text-align:right;
+  overflow-wrap:anywhere;
+}
+
+.kosong {
+  grid-column:1/-1;
+  text-align:center;
+  padding:40px 10px;
+  color:var(--muted);
+}
+
+/* FORM */
+.modal {
+  display:none;
+  position:fixed;
+  inset:0;
+  z-index:10;
+  background:#0008;
+  justify-content:center;
+  align-items:center;
+  padding:15px;
+}
+
+.modal.aktif {display:flex}
+
+.form-box {
+  background:white;
+  width:100%;
+  max-width:430px;
+  max-height:90vh;
+  overflow-y:auto;
+  padding:22px;
+  border-radius:15px;
+}
+
+.form-box h2 {
+  margin:0 0 17px;
+  font-size:19px;
+}
+
+.field {margin-bottom:12px}
+
+.field label {
+  display:block;
+  font-size:12px;
+  font-weight:700;
+  margin-bottom:6px;
+}
+
+.field input,
+.field select,
+.field textarea {
+  width:100%;
+  padding:11px;
+  border:1px solid var(--line);
+  border-radius:8px;
+  font:inherit;
+  font-size:13px;
+}
+
+.aksi {
+  display:flex;
+  gap:10px;
+  margin-top:17px;
+}
+
+.aksi button {
+  flex:1;
+  padding:11px;
+  border:0;
+  border-radius:8px;
+  font-weight:700;
+  cursor:pointer;
+}
+
+.simpan {
+  background:var(--blue);
+  color:white;
+}
+
+.batal {
+  background:#e9edf4;
+}
+
+@media(max-width:550px) {
+  .wadah {padding:18px 10px}
+
+  .daftar {
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:9px;
+  }
+
+  .atas h2 {font-size:15px}
+  .btn-tambah {font-size:11px}
+  .nama {font-size:11px}
+  .rincian {font-size:9px}
+}
+</style>
 </head>
 
 <body>
-  <!-- ==========================================================
-       BAGIAN 2: HTML (KERANGKA HALAMAN)
-       Hanya berisi kerangka kosong. Kartu siswa akan diisi
-       oleh JavaScript setelah data diambil dari Supabase.
-       ========================================================== -->
-  <div class="wadah">
-    <header>
-      <h1>Biodata Siswa</h1>
-      <p>Cari siswa berdasarkan nama atau NIS.</p>
-    </header>
 
-    <div class="kontrol">
-      <input id="cari" type="search" placeholder="Cari nama atau NIS" aria-label="Cari nama atau NIS">
-      <select id="filterKelas" aria-label="Filter kelas">
-        <option value="">Semua kelas</option>
-      </select>
-    </div>
+<div class="wadah">
 
-    <p id="jumlah" class="jumlah" aria-live="polite"></p>
-    <main id="daftar" class="daftar"></main>
+<header>
+  <h1>Biodata Siswa dan Guru</h1>
+  <p>Data Akademik Sekolah</p>
+</header>
+
+<div class="menu">
+  <button id="menuSiswa" class="aktif">Data Siswa</button>
+  <button id="menuGuru">Data Guru</button>
+</div>
+
+<div class="atas">
+  <h2 id="judul">Daftar Siswa</h2>
+  <button class="btn-tambah" id="tambah">+ Tambah Siswa</button>
+</div>
+
+<div class="kontrol">
+  <input id="cari" type="search" placeholder="Cari nama atau NIS">
+  <select id="filter">
+    <option value="">Semua kelas</option>
+  </select>
+</div>
+
+<p class="jumlah" id="jumlah"></p>
+
+<main class="daftar" id="daftar"></main>
+
+</div>
+
+<!-- FORM TAMBAH -->
+
+<div class="modal" id="modal">
+  <div class="form-box">
+
+    <h2 id="judulForm">Tambah Siswa</h2>
+
+    <form id="formData">
+      <div id="kolom"></div>
+
+      <div class="aksi">
+        <button type="button" class="batal" id="batal">Batal</button>
+        <button type="submit" class="simpan">Simpan</button>
+      </div>
+    </form>
+
   </div>
+</div>
 
-  <!-- Library Supabase dari CDN (versi dikunci supaya tidak berubah tiba-tiba) -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<script>
 
-  <!-- ==========================================================
-       BAGIAN 3: JAVASCRIPT (LOGIKA)
-       Alurnya:
-         1. Hubungkan ke Supabase
-         2. Ambil data siswa
-         3. Gambar kartu di halaman
-         4. Perbarui kartu saat pengunjung mencari / memfilter
-       ========================================================== -->
-  <script>
-    // ---------- LANGKAH 1: PENGATURAN ----------
-    // Ganti dua nilai ini dengan milik projectmu
-    // (Supabase > Settings > API > Project URL dan anon key).
-    // Anon key AMAN ditaruh di sini karena yang melindungi data
-    // adalah aturan RLS di Supabase, bukan kerahasiaan key ini.
-    // JANGAN PERNAH menaruh "service_role key" di file ini.
-    const SUPABASE_URL = "https://awpoaofctypyluvtrini.supabase.co";
-    const SUPABASE_ANON_KEY = "sb_publishable__trUldB6CNLauPTKMsWN0Q_8Z_CxryS";
+// DATA LOKAL
+let siswa = JSON.parse(localStorage.getItem("dataSiswa")) || [];
+let guru = JSON.parse(localStorage.getItem("dataGuru")) || [];
 
-    // Pilih data pribadi mana yang boleh tampil di website publik.
-    // true = tampil, false = disembunyikan.
-    const TAMPILKAN = {
-      jenisKelamin: true,
-      tanggalLahir: false,
-      alamat: false
-    };
+let mode = "siswa";
 
-    // ---------- LANGKAH 2: HUBUNGKAN KE SUPABASE ----------
-    const db = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const $ = id => document.getElementById(id);
 
-    // Ambil elemen HTML yang akan kita isi / baca
-    const elDaftar = document.getElementById("daftar");
-    const elJumlah = document.getElementById("jumlah");
-    const elCari = document.getElementById("cari");
-    const elKelas = document.getElementById("filterKelas");
+// SIMPAN DATA
+function simpanLokal() {
+  localStorage.setItem("dataSiswa",JSON.stringify(siswa));
+  localStorage.setItem("dataGuru",JSON.stringify(guru));
+}
 
-    // Tempat menyimpan seluruh data siswa setelah diambil
-    let semuaSiswa = [];
+// GANTI MENU
+function gantiMenu(m) {
+  mode = m;
 
-    // ---------- LANGKAH 3: AMBIL DATA ----------
-    async function muatData() {
-      tampilkanPesan("Memuat data siswa...");
+  $("menuSiswa").classList.toggle("aktif",m==="siswa");
+  $("menuGuru").classList.toggle("aktif",m==="guru");
 
-      // Sama artinya dengan SQL:
-      // SELECT nis, nama, ... FROM siswa ORDER BY nama
-      const { data, error } = await db
-        .from("siswa")
-        .select("nis, nama, kelas, jenis_kelamin, tanggal_lahir, alamat, foto_url")
-        .order("nama");
+  $("judul").textContent =
+    m==="siswa" ? "Daftar Siswa" : "Daftar Guru";
 
-      if (error) {
-        console.error(error);
-        tampilkanPesan(
-          "Data tidak bisa dimuat. Periksa URL dan anon key, nama tabel, serta policy RLS di Supabase.",
-          true
-        );
-        return;
-      }
+  $("tambah").textContent =
+    m==="siswa" ? "+ Tambah Siswa" : "+ Tambah Guru";
 
-      semuaSiswa = data;
-      isiPilihanKelas();
-      tampilkanSiswa();
-    }
+  $("cari").placeholder =
+    m==="siswa" ? "Cari nama atau NIS" : "Cari nama atau NIP";
 
-    // ---------- LANGKAH 4: TAMPILKAN KARTU ----------
-    function tampilkanSiswa() {
-      const kataKunci = elCari.value.trim().toLowerCase();
-      const kelasDipilih = elKelas.value;
+  $("filter").style.display =
+    m==="siswa" ? "" : "none";
 
-      // filter() menyaring data sesuai pencarian dan kelas
-      const hasil = semuaSiswa.filter((s) => {
-        const cocokKelas = !kelasDipilih || s.kelas === kelasDipilih;
-        const cocokCari =
-          !kataKunci ||
-          s.nama.toLowerCase().includes(kataKunci) ||
-          s.nis.toLowerCase().includes(kataKunci);
-        return cocokKelas && cocokCari;
+  $("cari").value = "";
+
+  tampilkan();
+}
+
+$("menuSiswa").onclick = () => gantiMenu("siswa");
+$("menuGuru").onclick = () => gantiMenu("guru");
+
+// FORM
+const kolom = {
+  siswa: [
+    ["nis","NIS","text"],
+    ["nama","Nama Lengkap","text"],
+    ["kelas","Kelas","text"],
+    ["jenis_kelamin","Jenis Kelamin","select"],
+    ["tanggal_lahir","Tanggal Lahir","date"],
+    ["alamat","Alamat","textarea"],
+    ["foto_url","URL Foto","url"]
+  ],
+  guru: [
+    ["nip","NIP","text"],
+    ["nama","Nama Lengkap","text"],
+    ["mata_pelajaran","Mata Pelajaran","text"],
+    ["jenis_kelamin","Jenis Kelamin","select"],
+    ["alamat","Alamat","textarea"],
+    ["foto_url","URL Foto","url"]
+  ]
+};
+
+// BUKA FORM
+$("tambah").onclick = () => {
+  $("judulForm").textContent =
+    mode==="siswa" ? "Tambah Data Siswa" : "Tambah Data Guru";
+
+  $("kolom").innerHTML = "";
+
+  kolom[mode].forEach(([key,label,type]) => {
+    const div = document.createElement("div");
+    div.className = "field";
+
+    const tulisan = document.createElement("label");
+    tulisan.textContent = label;
+
+    let input;
+
+    if(type==="select") {
+      input = document.createElement("select");
+
+      ["","Laki-laki","Perempuan"].forEach(v => {
+        const op = document.createElement("option");
+        op.value = v;
+        op.textContent = v || "Pilih jenis kelamin";
+        input.appendChild(op);
       });
 
-      elJumlah.textContent = hasil.length + " dari " + semuaSiswa.length + " siswa";
-      elDaftar.replaceChildren(); // kosongkan daftar lama
-
-      if (hasil.length === 0) {
-        tampilkanPesan(
-          semuaSiswa.length === 0
-            ? "Belum ada data siswa. Tambahkan data lewat Table Editor di Supabase."
-            : "Tidak ada siswa yang cocok. Coba kata kunci atau kelas lain."
-        );
-        return;
-      }
-
-      hasil.forEach((s) => elDaftar.appendChild(buatKartu(s)));
+    } else if(type==="textarea") {
+      input = document.createElement("textarea");
+      input.rows = 3;
+    } else {
+      input = document.createElement("input");
+      input.type = type;
     }
 
-    // Membuat satu kartu dari satu baris data siswa.
-    // Kita pakai textContent (bukan innerHTML) supaya teks dari database
-    // tidak bisa menyisipkan kode berbahaya (serangan XSS).
-    function buatKartu(s) {
-      const kartu = el("article", "kartu");
-      kartu.style.setProperty("--hue", warnaKelas(s.kelas));
+    input.name = key;
 
-      kartu.appendChild(el("div", "pita"));
-
-      const isi = el("div", "isi");
-
-      // Foto: pakai foto_url kalau ada, kalau tidak ada tampilkan inisial nama
-      const foto = el("div", "foto");
-      if (s.foto_url) {
-        const gambar = document.createElement("img");
-        gambar.src = s.foto_url;
-        gambar.alt = "Foto " + s.nama;
-        gambar.loading = "lazy";
-        gambar.onerror = () => foto.replaceChildren(document.createTextNode(inisial(s.nama)));
-        foto.appendChild(gambar);
-      } else {
-        foto.textContent = inisial(s.nama);
-      }
-      isi.appendChild(foto);
-
-      isi.appendChild(el("h2", "nama", s.nama));
-      isi.appendChild(el("p", "nis", "NIS " + s.nis));
-
-      // Daftar rincian (hanya baris yang ada isinya dan diizinkan tampil)
-      const rincian = el("dl", "rincian");
-      tambahBaris(rincian, "Kelas", s.kelas);
-      if (TAMPILKAN.jenisKelamin) tambahBaris(rincian, "Jenis kelamin", s.jenis_kelamin);
-      if (TAMPILKAN.tanggalLahir) tambahBaris(rincian, "Tanggal lahir", formatTanggal(s.tanggal_lahir));
-      if (TAMPILKAN.alamat) tambahBaris(rincian, "Alamat", s.alamat);
-      isi.appendChild(rincian);
-
-      kartu.appendChild(isi);
-      return kartu;
+    if(["nis","nip","nama","kelas","mata_pelajaran","jenis_kelamin"].includes(key)) {
+      input.required = true;
     }
 
-    // ---------- FUNGSI BANTU ----------
-    // Membuat elemen HTML dengan kelas dan teks (singkat dan rapi)
+    div.append(tulisan,input);
+    $("kolom").appendChild(div);
+  });
+
+  $("modal").classList.add("aktif");
+};
+
+function tutupForm() {
+  $("modal").classList.remove("aktif");
+  $("formData").reset();
+}
+
+$("batal").onclick = tutupForm;
+
+// TAMBAH DATA
+$("formData").onsubmit = e => {
+  e.preventDefault();
+
+  const data = {};
+
+  kolom[mode].forEach(([key]) => {
+    data[key] = e.target.elements[key].value.trim();
+  });
+
+  if(data.foto_url) {
+    try {
+      const url = new URL(data.foto_url);
+      if(!["http:","https:"].includes(url.protocol)) {
+        throw new Error();
+      }
+    } catch {
+      alert("URL foto tidak valid.");
+      return;
+    }
+  }
+
+  const daftar = mode==="siswa" ? siswa : guru;
+  const nomor = mode==="siswa" ? "nis" : "nip";
+
+  if(daftar.some(x => x[nomor] === data[nomor])) {
+    alert("Nomor identitas sudah digunakan!");
+    return;
+  }
+
+  daftar.push(data);
+
+  simpanLokal();
+  tutupForm();
+  tampilkan();
+
+  alert("Data berhasil ditambahkan!");
+};
+
+// INISIAL
+function inisial(nama) {
+  return (nama || "?")
+    .trim()
+    .split(/\s+/)
+    .slice(0,2)
+    .map(x => x[0].toUpperCase())
+    .join("");
+}
+
+// WARNA KARTU
+function warna(nama) {
+  let total = 0;
+  for(const c of nama || "") total += c.charCodeAt(0);
+
+  return total % 2
+    ? ["#a020b8","#eed2f3","#641078"]
+    : ["#2926b9","#d8d7f4","#211d7e"];
+}
+
+// TAMPILKAN KARTU
+function tampilkan() {
+  const daftar = mode==="siswa" ? siswa : guru;
+  const kata = $("cari").value.toLowerCase().trim();
+  const kelas = $("filter").value;
+
+  const hasil = daftar.filter(x => {
+    const nomor = mode==="siswa" ? x.nis : x.nip;
+
+    return (
+      (x.nama || "").toLowerCase().includes(kata) &&
+      (!kelas || x.kelas===kelas)
+    ) || (
+      (nomor || "").toLowerCase().includes(kata) &&
+      (!kelas || x.kelas===kelas)
+    );
+  });
+
+  $("jumlah").textContent =
+    `${hasil.length} dari ${daftar.length} ${mode}`;
+
+  const kelasLama = $("filter").value;
+
+  if(mode==="siswa") {
+    const kelasUnik = [...new Set(
+      siswa.map(x=>x.kelas).filter(Boolean)
+    )].sort();
+
+    $("filter").innerHTML =
+      '<option value="">Semua kelas</option>';
+
+    kelasUnik.forEach(k => {
+      const op = document.createElement("option");
+      op.value = k;
+      op.textContent = k;
+      $("filter").appendChild(op);
+    });
+
+    $("filter").value = kelasUnik.includes(kelasLama)
+      ? kelasLama : "";
+  }
+
+  $("daftar").innerHTML = "";
+
+  if(!hasil.length) {
+    $("daftar").innerHTML =
+      '<div class="kosong">Belum ada data yang ditampilkan.</div>';
+    return;
+  }
+
+  hasil.forEach(x => {
+    const w = warna(x.kelas || x.nama);
+    const nomor = mode==="siswa" ? x.nis : x.nip;
+
+    const kartu = document.createElement("article");
+    kartu.className = "kartu";
+
+    const pita = document.createElement("div");
+    pita.className = "pita";
+    pita.style.background = w[0];
+
+    const isi = document.createElement("div");
+    isi.className = "isi";
+
+    const foto = document.createElement("div");
+    foto.className = "foto";
+    foto.style.background = w[1];
+    foto.style.color = w[2];
+
+    foto.textContent = inisial(x.nama);
+
+    if(x.foto_url) {
+      const img = document.createElement("img");
+      img.src = x.foto_url;
+      img.alt = "Foto " + x.nama;
+      img.onerror = () => {
+        foto.replaceChildren(document.createTextNode(inisial(x.nama)));
+      };
+      foto.replaceChildren(img);
+    }
+
+    const nama = document.createElement("h3");
+    nama.className = "nama";
+    nama.textContent = x.nama;
+
+    const id = document.createElement("p");
+    id.className = "nomor";
+    id.textContent = (mode==="siswa" ? "NIS " : "NIP ") + nomor;
+
+    const rincian = document.createElement("div");
+    rincian.className = "rincian";
+
+    function baris(label,value) {
+      if(!value) return;
+
+      const b = document.createElement("div");
+      b.className = "baris";
+
+      const span = document.createElement("span");
+      span.textContent = label;
+
+      const strong = document.createElement("b");
+      strong.textContent = value;
+
+      b.append(span,strong);
+      rincian.appendChild(b);
+    }
+
+    if(mode==="siswa") {
+      baris("Kelas",x.kelas);
+    } else {
+      baris("Mata pelajaran",x.mata_pelajaran);
+    }
+
+    baris("Jenis kelamin",x.jenis_kelamin);
+
+    isi.append(foto,nama,id,rincian);
+    kartu.append(pita,isi);
+    $("daftar").appendChild(kartu);
+  });
+}
+
+// PENCARIAN
+$("cari").addEventListener("input",tampilkan);
+$("filter").addEventListener("change",tampilkan);
+
+// MULAI
+tampilkan();
+
+</script>
+</body>
+</html>
+/ Membuat elemen HTML dengan kelas dan teks (singkat dan rapi)
     function el(tag, kelas, teks) {
       const e = document.createElement(tag);
       if (kelas) e.className = kelas;
